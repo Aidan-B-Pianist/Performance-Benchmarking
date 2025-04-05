@@ -19,7 +19,7 @@ fn main() {
 fn quick_hybrid_sort<T: Ord>(arr: &mut [T], k: usize) -> &mut [T] {
     let len = arr.len();
     let mut pivot = len - 1;
-    let mut i: usize = 0;
+    let mut i: isize = -1;
     let mut j = 0;
 
     while j < arr.len() {
@@ -27,14 +27,14 @@ fn quick_hybrid_sort<T: Ord>(arr: &mut [T], k: usize) -> &mut [T] {
         if arr[j] < arr[pivot] {
             i += 1;
             //perform swap
-            arr.swap(i, j);
+            arr.swap(i as usize, j);
         }
         j += 1;
     }
     //pivot has been reached swap pivot and i + 1
     i += 1;
-    arr.swap(i, pivot);
+    arr.swap(i as usize, pivot);
 
-
+    
     return arr;
 }
