@@ -2,39 +2,92 @@
     Semester Project Hybrid Sort / Intergalactic Zoo Trip (Knapsack Problem)
     By Aidan Burchett and Geraldo
 */
+use std::time::Instant;
+use rand::Rng;
 
 fn main() {
-    // Example usage of the QuickHybridSort function
-    //let mut arr = vec![5, 2, 9, 1, 5, 6, 3, 7, 8, 4, 0, 34, 62, 12, 52, 23, 15, 33, 65, 89, 11, 51, 45];
-    let mut arr1 = vec![8, 2, 4, 7, 1, 3, 9, 6, 5];
-    println!("Original array: {:?}", arr1);
-    let k = 3;
-    let sorted_arr = quick_hybrid_sort(&mut arr1, k);
-    println!("After pivot final array: {:?}", sorted_arr);
+    let sizes = [10, 100, 1000, 10000, 100000];
+
+    let k_sizes = [5, 10, 20, 35, 50];
+
+    for size in sizes {
+        println!("Testing array size of {}.", size);
+
+        let mut rng = rand::thread_rng();
+        let array: Vec<i32> = (0..size).map(|_| rng.gen_range(0..1000000)).collect();
+
+        for k in k_sizes {
+            
+            let mut test_array = array.clone();
+
+            let start_time = Instant::now();
+            quick_hybrid_sort(&mut test_array, k);
+            let duration = start_time.elapsed();
+
+            let is_sorted = test_array.windows(2).all(|n| n[0] <= n[1]);
+
+            println!("The array is sorted: {}", is_sorted);
+            println!("The array length is {}, with k-value: {}, sorted in {:?},", size, k, duration);
+        }
+    }
 }
 
 
 // Part 1
 // This function implements a hybrid sorting algorithm that combines quicksort and insertion sort.
-fn quick_hybrid_sort<T: Ord>(arr: &mut [T], k: usize) -> &mut [T] {
-    let len = arr.len();
-    let mut pivot = len - 1;
-    let mut i: isize = -1;
-    let mut j = 0;
-
-    while j < arr.len() {
-        //condition to check if pivot number is greater than j
-        if arr[j] < arr[pivot] {
-            i += 1;
-            //perform swap
-            arr.swap(i as usize, j);
-        }
-        j += 1;
+fn quick_hybrid_sort<T: Ord + Clone>(arr: &mut [T], k: usize) -> &mut [T] {
+    if arr.len() <= 1 {
+        return arr;
     }
-    //pivot has been reached swap pivot and i + 1
-    i += 1;
-    arr.swap(i as usize, pivot);
 
-    
+    quick_sort(arr, 0, (arr.len() - 1) as isize, k);
+
     return arr;
+}
+
+//recursively call quick sort until subarray reaches k, then call insertion sort
+fn quick_sort<T: Ord + Clone>(arr: &mut [T], start: isize, end: isize, k: usize) {
+    if start <= end {
+
+        let threshold = end - start + 1;
+
+        if threshold as usize > k {
+            let pivot = partition(arr, start, end);
+
+            quick_sort(arr, start, pivot - 1, k);
+            quick_sort(arr, pivot + 1, end, k);
+        } else {
+            insertion_sort(arr);
+        }
+    }
+}
+
+//Divide the quicksort into partitions
+fn partition<T: Ord + Clone>(arr: &mut [T], start: isize, end: isize) -> isize {
+    let pivot = arr[end as usize].clone();
+    let mut i = start - 1;
+
+    for j in start..end {
+        if arr[j as usize] <= pivot {
+            i += 1;
+            arr.swap(i as usize, j as usize);
+        }
+    }
+
+    let pivot_index = i + 1;
+    arr.swap(pivot_index as usize, end as usize);
+    return pivot_index;
+}
+
+
+fn insertion_sort<T: Ord>(arr: &mut [T]) {
+    for i in 1..arr.len() {
+
+        let mut j = i;
+
+        while j > 0 && arr[j - 1] > arr[j] {
+            arr.swap(j, j - 1);
+            j -= 1;
+        }
+    }
 }
