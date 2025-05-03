@@ -6,7 +6,7 @@ use std::time::Instant;
 use rand::Rng;
 
 fn main() {
-    let sizes = [100000];
+    let sizes = [100, 250, 500, 750, 1000];
 
     let k_sizes = [10, 20, 30, 40, 50];
 
@@ -15,7 +15,12 @@ fn main() {
         println!("Testing array size of {}.", size);
 
         let mut rng = rand::thread_rng();
-        let array: Vec<i32> = (0..size).map(|_| rng.gen_range(0..100000)).collect();
+        
+        //Random array
+        //let array: Vec<i32> = (0..size).map(|_| rng.gen_range(0..100000)).collect();
+
+        //Pre Sorted array
+        let array: Vec<i32> = (0..size).collect();
 
         //Hybrid Sort
         println!("Hybrid Sort");
