@@ -5,6 +5,11 @@
 use std::time::Instant;
 use rand::Rng;
 
+//This is the main function where we can define sizes and k-values.
+
+/*If we uncomment the random array it will randomly generate the array 
+otherwise we will continue with the presorted array.
+*/
 fn main() {
     let sizes = [100, 250, 500, 750, 1000];
 
